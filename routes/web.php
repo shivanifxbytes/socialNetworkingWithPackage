@@ -16,6 +16,7 @@ Route::get('/', function () {
 });
 Route::get('friendSuggestionList', ['as'=>'pendingrequests','uses'=>'UserController@friendSuggestionList']);
 Route::get('friendsList', ['as'=>'friendsList','uses'=>'UserController@friendsList']);
+Route::get('friendRequests', ['as'=>'friendRequests','uses'=>'UserController@friendRequests']);
 Route::get('add/{id}', ['as'=>'add','uses'=>'UserController@addFriend']);
 Route::get('accept/{id}', ['as'=>'accept','uses'=>'UserController@acceptFriend']);
 

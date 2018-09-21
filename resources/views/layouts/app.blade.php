@@ -54,6 +54,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{url('friendsList')}}">Friends List</a>
                             </li>
+                             <li class="nav-item">
+                                <a class="nav-link" href="{{url('friendRequests')}}">Friend Requests</a>
+                            </li>
                               <li class="nav-item">
                                 <a class="nav-link" href="{{url('viewposts')}}">View Posts</a>
                             </li>

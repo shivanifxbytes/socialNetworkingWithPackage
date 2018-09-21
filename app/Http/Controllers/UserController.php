@@ -57,14 +57,23 @@ class UserController extends Controller
     }
 
     public function friendsList()
-
+    {
         $user_id =Auth::user()->id;
         $user = User::find($user_id);
-        //$recipient = User::find($id);
-        echo "<pre>";
         $friends = $user->getAcceptedFriendships()->toArray();
+        echo "<pre>";
         print_r($friends);
-        die();
-       
+        die();      
     }
+
+    public function friendRequests()
+    {
+        $user_id =Auth::user()->id;
+        $user = User::find($user_id);
+        $friendRequests = $user->getFriendRequests()->toArray();
+        echo "<pre>";
+       print_r($friendRequests);
+        die(); 
+    }
+    
 }
