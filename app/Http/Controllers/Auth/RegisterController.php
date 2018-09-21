@@ -6,7 +6,11 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Mail\VerifyMail;
+use App\VerifyUser;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -50,8 +54,8 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'user_first_name' => 'required|string|max:255',
-            'user_email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'user_email'      => 'required|string|email|max:255|unique:users',
+            'password'        => 'required|string|min:6|confirmed',
         ]);
     }
 
@@ -63,10 +67,43 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'user_first_name' => $data['user_first_name'],
             'user_email' => $data['user_email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        $verifyUser = VerifyUser::create([
+            'user_id' => $user->id,
+            'token'   => str_random(40)
+]);
+
+        Mail::to($user->user_email)->send(new VerifyMail($user));
+       
+        return $user;
+    }
+
+    public function verifyUser($token)
+    {
+       $verifyUser = VerifyUser::where('token', $token)->first();
+        if (isset($verifyUser)) {
+            $user = $verifyUser->user;
+            if (!$user->verified) {
+                $verifyUser->user->verified = 1;
+                $verifyUser->user->save();
+                $status = "Your e-mail is verified. You can now login.";
+            } else {
+                $status = "Your e-mail is already verified. You can now login.";
+            }
+        } else {
+            return redirect('/login')->with('warning', "Sorry your email cannot be identified.");
+        }
+        return redirect('/login')->with('status', $status);
+    }
+
+    protected function registered(Request $request, $user)
+    {
+        $this->guard()->logout();
+        return redirect('/login')->with('status', 'We sent you an activation code. Check your email and click on the link to verify.');
     }
 }

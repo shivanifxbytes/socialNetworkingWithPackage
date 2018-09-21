@@ -57,7 +57,7 @@ class UserController extends Controller
     }
 
     public function friendsList()
-    {
+
         $user_id =Auth::user()->id;
         $user = User::find($user_id);
         //$recipient = User::find($id);
